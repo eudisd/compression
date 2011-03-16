@@ -10,15 +10,25 @@ dictionary = {'a':0,'b':1,'c':2,'d':3,'e':4,'f':5,'g':6,'h':7,'i':8,'j':9,
 
 def main():
 
-    
 
     if len(sys.argv) == 1:
         usage()
     elif len(sys.argv) >= 3:
+        try:
+            i = open(sys.argv[2], "rb")
+
+        except IOError:
+            print "Error opening: %s" % sys.argv[2]
+            exit(-1)
+
         if sys.argv[1] == "-c":
-            encode(sys.argv[2])
+            msg = i.read()
+            encode(msg)
+                
         elif sys.argv[1] == "-d":
-            decode(sys.argv[2])
+            msg = i.read()
+            decode(msg)
+
         else:
             print "\nError: No valid command given! Type: python lzw.py for help.\n"
             exit(-1)
@@ -36,7 +46,16 @@ def usage():
 
 def encode(message):
     global dictionary
-    print dictionary
+    if len(sys.argv) >= 5:
+        try:
+            o = open(sys.argv[4], "wb")
+        except IOError:
+            print "Error opening file %s for writing." % sys.argv[4]
+            exit(-1)
+    
+    word = ''
+
+    
     return
 
 def decode(message):
