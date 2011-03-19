@@ -2,14 +2,19 @@
 
 import sys
 
-dictionary = {'a':0,'b':1,'c':2,'d':3,'e':4,'f':5,'g':6,'h':7,'i':8,'j':9,
-                  'k':10,'l':11,'m':12,'n':13,'o':14,'p':15,'q':16,'r':17,
-                  's':18,'t':19,'u':20,'v':21,'w':22,'x':23,'y':24,'z':25,
-                  '0':26,'1':27,'2':28,'3':39,'4':40,'5':41,'6':42,'7':43,
-                  '8':44,'9':45}
+dic2 = "a,b,c,d,e,f,g,i,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,0,1,2,3,4,5,6,7,8,9"
+dic2 = dic2.split(",")
+
+dic = {}
+for i in range(len(dic2)):
+    dic[dic2[i]] = i
+
+
+
+
 
 def main():
-
+    
 
     if len(sys.argv) == 1:
         usage()
@@ -45,7 +50,7 @@ def usage():
     return
 
 def encode(message):
-    global dictionary
+    global dic
     if len(sys.argv) >= 5:
         try:
             o = open(sys.argv[4], "wb")
@@ -53,14 +58,33 @@ def encode(message):
             print "Error opening file %s for writing." % sys.argv[4]
             exit(-1)
     
-    word = ''
-
+    word = message[0]
+    for i in range(1,len(message)):
+        char = message[i]
+        if find(dic, word+char) == True:
+            word = word + char
+        else:
+            
+            dic[word+char] = dic.values()[len(dic.keys()) - 1] + str(1)
+            word = char
     
+    
+        
+    
+    print dic
     return
+
+def find(L, t):
+    try:
+        L.index(t) 
+        return True
+    except:
+        return False
 
 def decode(message):
 
     return
+
 
 if __name__ == "__main__":
     main()
