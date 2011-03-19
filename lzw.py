@@ -1,8 +1,10 @@
 #! /usr/bin/env python
 
 import sys
+import struct
+import pickle
 
-dic2 = "a,b,c,d,e,f,g,i,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,0,1,2,3,4,5,6,7,8,9"
+dic2 = " ,a,b,c,d,e,f,g,i,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,0,1,2,3,4,5,6,7,8,9"
 dic2 = dic2.split(",")
 
 dic = {}
@@ -31,13 +33,14 @@ def main():
             encode(msg)
                 
         elif sys.argv[1] == "-d":
-            msg = i.read()
-            decode(msg)
+            
+            decode(sys.argv[2])
 
         else:
             print "\nError: No valid command given! Type: python lzw.py for help.\n"
             exit(-1)
-            
+
+        i.close()  
     return
 
 def usage():
@@ -51,12 +54,10 @@ def usage():
 
 def encode(message):
     global dic
-    if len(sys.argv) >= 5:
-        try:
-            o = open(sys.argv[4], "wb")
-        except IOError:
-            print "Error opening file %s for writing." % sys.argv[4]
-            exit(-1)
+    o = open(sys.argv[3], "wb")
+
+    data = []
+    
     
     word = message[0]
     for i in range(1,len(message)):
@@ -65,13 +66,21 @@ def encode(message):
             word = word + char
         else:
             
-            dic[word+char] = dic.values()[len(dic.keys()) - 1] + str(1)
+            data.append( dic[word] )
+            dic[word+char] = sorted(dic.values())[len(dic.values()) - 1] + 1
             word = char
-    
-    
+
+
+    #First, we write out the header (first 2 bytes is the length of the
+    #dictionary, the rest is the dictionary, then followed by the codes.
+    write_dic(o, dic)
+
+    for i in data:
+        # Here I write out the code for the characters
+        o.write( struct.pack('b', i) )
         
+    o.close()
     
-    print dic
     return
 
 def find(L, t):
@@ -81,10 +90,29 @@ def find(L, t):
     except:
         return False
 
-def decode(message):
+def decode(filename):
 
+    try:
+        i = open(filename, "rb")
+    except IOError:
+        print "Error reading encoded file, exiting..."
+        exit(-1)
+    
     return
 
+def write_dic(o, dic):
+    """
+    writes the dictionary to output stream.
+    Must be part of the LZW encoding scheme.
+    """
+
+    #write out length first (two byte short gives ~64k range)
+    dic_len = len(dic.values())
+    
+    o.write( struct.pack('h', dic_len) )
+    serial = pickle.Pickler(o, pickle.HIGHEST_PROTOCOL)
+    serial.dump(dic)
+    return
 
 if __name__ == "__main__":
     main()

@@ -1,1 +1,26 @@
-/wed/we/wee/web/wet
+HW # 1
+By Eudis Duran
+
+
+Notes:
+
+1. The Arithmatic codec scheme is coded as a utility in python.
+	Run:
+		python arithmatic.py inputfile outputfile
+		
+2. The k-means assignment is implemented simply as an algorithm.
+   Run:
+		python k-means.py
+		
+3. The LZW codec scheme is also coded as a utility in python.
+	Run: 
+		python lzw.py inputfile outputfile
+		
+		
+PS: I have version controlled this assignment.  There is a hidden
+dotfile (.hg) that holds the database for all my changes.  If you wish
+to further inspect what I did, 'cd' into my project folder and run:
+	hg log
+	
+(Assuming you have Mercurial installed on your system)
+		
