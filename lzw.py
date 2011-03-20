@@ -100,13 +100,21 @@ def decode(infile, outfile):
 
     o = open(outfile, "wb")
 
-    #dic_len = struct.unpack('h', i.read(2) )
+    
     dic = pickle.load(i)
 
     
 
-    print dic
+    data = i.read();
+
     
+    w = struct.unpack('b', data[0])
+    text = lookup(w[0], dic)
+    for I in range(1, len(data)):
+        w = struct.unpack('b', data[I])
+        text = text + lookup(w[0], dic)
+
+    o.write(text)
     i.close()
     o.close()
     
@@ -118,18 +126,18 @@ def write_dic(o, dic):
     writes the dictionary to output stream.
     Must be part of the LZW encoding scheme.
     """
-
-    #write out length first (two byte short gives ~64k range)
-    #dic_len = len(dic.values())
-
-    
-    #o.write( struct.pack('h', dic_len) )
     serial = pickle.Pickler(o, pickle.HIGHEST_PROTOCOL)
     serial.dump(dic)
     return
 
+def lookup(value, dic):
+    for k, v in dic.iteritems():
+        if value == v:
+            return k
+        
 if __name__ == "__main__":
     main()
+
 
 
 
