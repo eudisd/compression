@@ -34,7 +34,7 @@ def main():
                 
         elif sys.argv[1] == "-d":
             
-            decode(sys.argv[2])
+            decode(sys.argv[2], sys.argv[3])
 
         else:
             print "\nError: No valid command given! Type: python lzw.py for help.\n"
@@ -90,13 +90,26 @@ def find(L, t):
     except:
         return False
 
-def decode(filename):
+def decode(infile, outfile):
 
     try:
-        i = open(filename, "rb")
+        i = open(infile, "rb")
     except IOError:
         print "Error reading encoded file, exiting..."
         exit(-1)
+
+    o = open(outfile, "wb")
+
+    #dic_len = struct.unpack('h', i.read(2) )
+    dic = pickle.load(i)
+
+    
+
+    print dic
+    
+    i.close()
+    o.close()
+    
     
     return
 
@@ -107,9 +120,10 @@ def write_dic(o, dic):
     """
 
     #write out length first (two byte short gives ~64k range)
-    dic_len = len(dic.values())
+    #dic_len = len(dic.values())
+
     
-    o.write( struct.pack('h', dic_len) )
+    #o.write( struct.pack('h', dic_len) )
     serial = pickle.Pickler(o, pickle.HIGHEST_PROTOCOL)
     serial.dump(dic)
     return
