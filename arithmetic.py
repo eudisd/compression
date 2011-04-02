@@ -4,9 +4,14 @@ import sys
 import struct
 import pickle
 
+# Frequency Table ( f : symbol -> prob, low, high )
+
+freq = {}
+for i in range(256):    
+    freq[chr(i)] = [0.0, 0.0, 0.0]    
+
+
 def main():
-
-
     if len(sys.argv) == 1:
         usage()
     elif len(sys.argv) >= 3:
@@ -42,8 +47,80 @@ def usage():
     return
 
 def encode(message):
-   
+    message = "ace" 
+    # Calculate frequencies First
+    for i in range(256):
+        for j in message:
+            if j == chr(i):
+                freq[j][0] = freq[j][0] + 1
     
+    # Get Total Amount of Relevant Chars
+    total = 0.0
+    for i in range(256):
+        if ( freq[chr(i)][0] != 0 ):
+            total = total + 1.0
+    total = 3      
+    
+    high = 0
+    low = 0
+
+    # Calculate the high and low values of the table
+    for i in range(256):
+        if ( freq[chr(i)][0] != 0 ):
+            high = low + freq[chr(i)][0]/total
+            freq[chr(i)][1] = low
+            freq[chr(i)][2] = high
+            low = high
+            
+    
+    # Use a smaller table  
+    freqs = {}
+    for i in range(256):
+        if ( freq[chr(i)][0] != 0 ):
+            freqs[chr(i)] = freq[chr(i)]
+            print "Symbol: %c -- Prob: %f -- Low: %f -- High: %f" % (chr(i), freqs[chr(i)][0], freqs[chr(i)][1], freqs[chr(i)][2])
+            
+    
+    
+    Range = high - low
+    low = 0.0
+    high = 1.0
+
+    print "\nEncoding"
+    for i in message:
+        Range = high - low
+        high = low + Range * freqs[i][2]
+        low = low + Range * freqs[i][1]
+        print "Symbol: %c -- Range: %f -- Low: %f -- High: %f" % (i, Range, low, high)
+        
+    print low
+
+    encoded_value = low
+
+    # Decoding
+
+    print "Decoding"
+
+    data = ''
+    symbol = ''
+    Flag = True
+    while True:
+        # Get the symbol that has the encoded value withing it's range
+        for k, v in freqs.iteritems():
+            if ( encoded_value < v[2] and encoded_value > v[1] ):
+                symbol = k
+                data = data + symbol
+            else:
+                flag = False
+
+        Range = freqs[symbol][2] - freqs[symbol][1]
+        encoded_value = (encoded_value - freqs[symbol][1]) / Range
+        
+        if (flag == False):
+            break
+
+    print data
+
     return
 
 def decode(infile, outfile):
