@@ -95,7 +95,7 @@ def encode(message):
         
     print low
 
-    encoded_value = low
+    encoded_value = 0.195
 
     # Decoding
 
@@ -115,7 +115,7 @@ def encode(message):
 
         Range = freqs[symbol][2] - freqs[symbol][1]
         encoded_value = (encoded_value - freqs[symbol][1]) / Range
-        
+        print "Encoded: ", encoded_value
         if (flag == False):
             break
 
