@@ -66,7 +66,6 @@ def encode(message):
 
         if find(dic, word+char) == True:
             word = word + char
-            print "werd"
         else:
 
             data.append( dic[word] )
