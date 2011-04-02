@@ -4,8 +4,9 @@ import sys
 import struct
 import pickle
 
-dic2 = " ,a,b,c,d,e,f,g,i,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,0,1,2,3,4,5,6,7,8,9"
-dic2 = dic2.split(",")
+dic2 = []
+for i in range(255):
+    dic2.append(chr(i))
 
 dic = {}
 for i in range(len(dic2)):
@@ -16,7 +17,7 @@ for i in range(len(dic2)):
 
 
 def main():
-    
+
 
     if len(sys.argv) == 1:
         usage()
@@ -62,10 +63,12 @@ def encode(message):
     word = message[0]
     for i in range(1,len(message)):
         char = message[i]
+
         if find(dic, word+char) == True:
             word = word + char
+            print "werd"
         else:
-            
+
             data.append( dic[word] )
             dic[word+char] = sorted(dic.values())[len(dic.values()) - 1] + 1
             word = char
@@ -77,18 +80,18 @@ def encode(message):
 
     for i in data:
         # Here I write out the code for the characters
-        o.write( struct.pack('b', i) )
+        o.write( struct.pack('h', i) )
         
     o.close()
     
     return
 
-def find(L, t):
-    try:
-        L.index(t) 
-        return True
-    except:
-        return False
+def find(dic, key):
+    for k, v in dic.iteritems():
+        if k == key:
+            return True
+    return False
+
 
 def decode(infile, outfile):
 
@@ -107,11 +110,13 @@ def decode(infile, outfile):
 
     data = i.read();
 
+
+    w = struct.unpack_from('h', data[0:2] )
     
-    w = struct.unpack('b', data[0])
     text = lookup(w[0], dic)
-    for I in range(1, len(data)):
-        w = struct.unpack('b', data[I])
+
+    for I in range(2, len(data) - 2, 2):
+        w = struct.unpack('h', data[I:I+2])
         text = text + lookup(w[0], dic)
 
     o.write(text)
@@ -134,7 +139,15 @@ def lookup(value, dic):
     for k, v in dic.iteritems():
         if value == v:
             return k
-        
+    return ''
+
+def print_dic(dic):
+    for k, v in dic.iteritems():
+        if( v > 32 and v < 127):
+            print "Key: ", k, " Value: ", v
+
+
+
 if __name__ == "__main__":
     main()
 
