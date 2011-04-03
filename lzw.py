@@ -94,7 +94,6 @@ def decode(infile, outfile):
     text = lookup(w[0], dic)
 
     for I in range(2, len(data), 2):
-        print "once"
         w = struct.unpack('h', data[I:I+2])
         text = text + lookup(w[0], dic)
 
