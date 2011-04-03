@@ -47,7 +47,7 @@ def usage():
     return
 
 def encode(message):
-    message = "ace" 
+    message = "ace"
     # Calculate frequencies First
     for i in range(256):
         for j in message:
@@ -59,8 +59,8 @@ def encode(message):
     for i in range(256):
         if ( freq[chr(i)][0] != 0 ):
             total = total + 1.0
-    total = 3      
-    
+    total = 4
+
     high = 0
     low = 0
 
@@ -95,7 +95,7 @@ def encode(message):
         
     print low
 
-    encoded_value = 0.195
+    encoded_value = low
 
     # Decoding
 
@@ -103,20 +103,21 @@ def encode(message):
 
     data = ''
     symbol = ''
-    Flag = True
+    flag = False
     while True:
         # Get the symbol that has the encoded value withing it's range
         for k, v in freqs.iteritems():
-            if ( encoded_value < v[2] and encoded_value > v[1] ):
+            if ( encoded_value < v[2] and encoded_value >= v[1] ):
                 symbol = k
                 data = data + symbol
+
             else:
-                flag = False
+                flag = True
 
         Range = freqs[symbol][2] - freqs[symbol][1]
         encoded_value = (encoded_value - freqs[symbol][1]) / Range
         print "Encoded: ", encoded_value
-        if (flag == False):
+        if (flag == True):
             break
 
     print data

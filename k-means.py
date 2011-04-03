@@ -8,7 +8,6 @@ class Cluster:
         self.count = 0
         self.error = 0
 
-    
 
 def main():
 
