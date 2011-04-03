@@ -4,19 +4,10 @@ import sys
 import struct
 import pickle
 
-dic2 = []
-for i in range(255):
-    dic2.append(chr(i))
-
-dic = {}
-for i in range(len(dic2)):
-    dic[dic2[i]] = i
-
-
-
-
+dic = dict([ (chr(i), i) for i in range(256) ])
 
 def main():
+
 
 
     if len(sys.argv) == 1:
@@ -56,10 +47,7 @@ def usage():
 def encode(message):
     global dic
     o = open(sys.argv[3], "wb")
-
     data = []
-    
-    
     word = message[0]
     for i in range(1,len(message)):
         char = message[i]
@@ -93,7 +81,6 @@ def find(dic, key):
 
 
 def decode(infile, outfile):
-
     try:
         i = open(infile, "rb")
     except IOError:
@@ -101,20 +88,13 @@ def decode(infile, outfile):
         exit(-1)
 
     o = open(outfile, "wb")
-
-    
     dic = pickle.load(i)
-
-    
-
     data = i.read();
-
-
     w = struct.unpack_from('h', data[0:2] )
-    
     text = lookup(w[0], dic)
 
-    for I in range(2, len(data) - 2, 2):
+    for I in range(2, len(data), 2):
+        print "once"
         w = struct.unpack('h', data[I:I+2])
         text = text + lookup(w[0], dic)
 
