@@ -76,7 +76,7 @@ def encode(message):
             low = high
             
     
-    # Use a smaller table  
+    # Use a smaller table called 'freqs' (only holds the encountered symbols)
     freqs = {}
     for i in range(256):
         if ( freq[chr(i)][0] != 0 ):
@@ -92,7 +92,7 @@ def encode(message):
         Range = high - low
         high = low + Range * freqs[i][2]
         low = low + Range * freqs[i][1]
-        print "Symbol: %c -- Range: %f -- Low: %f -- High: %f" % (i, Range, low, high)
+        print "-- Range: %f -- Low: %f -- High: %f" % (Range, low, high)
         
     #First, we write the size of the string out, so we have a stopping case
     # during decompression. 'h' is for short, so we use only two bytes to hold the filesize
@@ -104,7 +104,7 @@ def encode(message):
     serial = pickle.Pickler(o, pickle.HIGHEST_PROTOCOL)
     serial.dump(freqs)
     
-    #Finally, we write out the actual value encoded in 'f' (4 bytes)
+    #Finally, we write out the actual value encoded in 'f' (4 bytes) tops
     o.write(struct.pack('f', low)) 
 
     o.close()
@@ -113,8 +113,6 @@ def encode(message):
     return
 
 def decode(infile, outfile):
-        
-    
 
     try:
         inf = open(infile, "rb")
@@ -130,15 +128,11 @@ def decode(infile, outfile):
 
     encoded_value = struct.unpack('f', inf.read(4))[0]
 
-    print "Total: ", total
     print "Encoded Value: ", encoded_value
-    
-
     print "Decoding"
 
     data = ''
     symbol = ''
-    
     size = total
     count = 0
 
