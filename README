@@ -18,7 +18,7 @@ Notes:
 		
 		
 PS: I have version controlled this assignment.  There is a hidden
-dotfile (.hg) that holds the database for all my changes.  If you wish
+dotfile (.hg) that holds the database for all my change sets and logs.  If you wish
 to further inspect what I did, 'cd' into my project folder and run:
 	hg log
 	

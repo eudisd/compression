@@ -7,6 +7,7 @@ class Cluster:
         self.mean = 0
         self.count = 0
         self.error = 0
+        self.points = []
 
     
 def min_index(K, p):
@@ -26,6 +27,16 @@ def argmin(K, p):
             m = abs(K[i].mean - p)
 
     return m
+def check_all(k, e):
+    """ Checks to see if all errors are below the threshold """
+    flag = False
+    for i in k:
+        if i.error < e:
+            flag = True
+        else:
+            return False
+
+    return flag
 
 def main():
 
@@ -38,29 +49,38 @@ def main():
     N = len(histogram)
     
     K = N/2
-
+    error = 0.2
     k = []
     # Soft Sequential K-Means
     c = Cluster()
     c.mean = histogram[0]
     c.count += 1
     k.append(c)
-    for i in range(1, N):
-        if( len(k) < K ):
-            
-            min_distance = argmin(k, histogram[i])
-            if ( min_distance > d ):
-                c = Cluster()
-                c.mean = histogram[i]
-                c.count += 1
-                k.append(c)
-            else:
-                index = min_index(k, histogram[i])
 
-                # Compute K means
-                pass
-             
-        
+    # While there errors in any cluster:
+    
+    while (check_all(k, error) == True):
+        j = 0
+        for i in range(1, N):
+            if( len(k) < K ):
+                
+                min_distance = argmin(k, histogram[i])
+                if ( min_distance > d ):
+                    c = Cluster()
+                    c.mean = histogram[i]
+                    c.count += 1
+                    k.append(c)
+                else:
+                    # First, search for the index with the argmin index
+                    index = min_index(k, histogram[i])
+                    # Then, assign this to the cluster in a points array
+                    # that stores the list of indexes of points for that 
+                    # cluster
+                    k[index].points.append(i) 
+                    # Compute K means
+                    pass
+        j += 1
+        error -= j
     
     
     

@@ -47,7 +47,11 @@ def usage():
     return
 
 def encode(message):
-    message = "ace"
+    
+    if( len(sys.argv) >= 4 ):
+        o = open(sys.argv[3], "wb")
+    
+    print "Message: ", message
     # Calculate frequencies First
     for i in range(256):
         for j in message:
@@ -59,8 +63,7 @@ def encode(message):
     for i in range(256):
         if ( freq[chr(i)][0] != 0 ):
             total = total + 1.0
-    total = 4
-
+    
     high = 0
     low = 0
 
@@ -79,8 +82,6 @@ def encode(message):
         if ( freq[chr(i)][0] != 0 ):
             freqs[chr(i)] = freq[chr(i)]
             print "Symbol: %c -- Prob: %f -- Low: %f -- High: %f" % (chr(i), freqs[chr(i)][0], freqs[chr(i)][1], freqs[chr(i)][2])
-            
-    
     
     Range = high - low
     low = 0.0
@@ -93,39 +94,70 @@ def encode(message):
         low = low + Range * freqs[i][1]
         print "Symbol: %c -- Range: %f -- Low: %f -- High: %f" % (i, Range, low, high)
         
-    print low
+    #First, we write the size of the string out, so we have a stopping case
+    # during decompression. 'h' is for short, so we use only two bytes to hold the filesize
 
-    encoded_value = low
+    o.write( struct.pack('h', total) )
 
-    # Decoding
+    #Then, we write out the frequency table
+
+    serial = pickle.Pickler(o, pickle.HIGHEST_PROTOCOL)
+    serial.dump(freqs)
+    
+    #Finally, we write out the actual value encoded in 'f' (4 bytes)
+    o.write(struct.pack('f', low)) 
+
+    o.close()
+    
+
+    return
+
+def decode(infile, outfile):
+        
+    
+
+    try:
+        inf = open(infile, "rb")
+    except IOError:
+        print "Error opening file for decoding, exiting..."
+        exit(-1)
+
+    out = open(outfile, "wb")
+
+    total = struct.unpack('h', inf.read(2))[0]
+
+    freqs = pickle.load(inf)
+
+    encoded_value = struct.unpack('f', inf.read(4))[0]
+
+    print "Total: ", total
+    print "Encoded Value: ", encoded_value
+    
 
     print "Decoding"
 
     data = ''
     symbol = ''
-    flag = False
-    while True:
+    
+    size = total
+    count = 0
+
+    while count < size:
         # Get the symbol that has the encoded value withing it's range
         for k, v in freqs.iteritems():
             if ( encoded_value < v[2] and encoded_value >= v[1] ):
                 symbol = k
                 data = data + symbol
 
-            else:
-                flag = True
-
         Range = freqs[symbol][2] - freqs[symbol][1]
         encoded_value = (encoded_value - freqs[symbol][1]) / Range
         print "Encoded: ", encoded_value
-        if (flag == True):
-            break
+        count += 1 
 
-    print data
 
-    return
-
-def decode(infile, outfile):
-
+    out.write(data)
+    out.close()
+    
    
     return
 
