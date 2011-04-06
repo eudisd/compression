@@ -8,7 +8,7 @@ import pickle
 
 freq = {}
 for i in range(256):    
-    freq[chr(i)] = [0.0, 0.0, 0.0]    
+    freq[chr(i)] = [0.0, 0.0, 0.0]
 
 
 def main():
