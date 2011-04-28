@@ -1,20 +1,18 @@
-HW # 1
-By Eudis Duran
 
 
-Notes:
+## Notes:
 
 1. The Arithmatic codec scheme is coded as a utility in python.
    The core compression algorithm can be found in the encode() function.
    The decompression algorithm is found in decode(), accordingly.
 	Run:
-		python arithmatic.py inputfile outputfile	
+>		python arithmatic.py inputfile outputfile	
 		
 2. The LZW codec scheme is also coded as a utility in python.
    The core compression algorithm can be found in the encode() function.
    The decompression algorithm is found in decode().
 	Run: 
-		python lzw.py inputfile outputfile
+>		python lzw.py inputfile outputfile
 		
 		
 		
